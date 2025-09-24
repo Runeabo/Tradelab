@@ -1,0 +1,195 @@
+{
+  "brand": {
+    "name": "TradeLab",
+    "tagline": "Experiment. Learn. Trade smarter."
+  },
+  "navbar": {
+    "home": "Home",
+    "leaderboard": "Leaderboard",
+    "tournaments": "Tournaments",
+    "disclaimer": "Disclaimer",
+    "account": "Account"
+  },
+  "footer": {
+    "copyright": "© {{year}} TradeLab",
+    "disclaimer": "Disclaimer",
+    "privacy": "Privacy"
+  },
+  "buttons": {
+    "continue": "Continue",
+    "cancel": "Cancel",
+    "close": "Close",
+    "save": "Save",
+    "ok": "OK",
+    "buy": "Buy",
+    "sell": "Sell",
+    "closePosition": "Close Position",
+    "sendMagicLink": "Send me a magic link",
+    "verifyNow": "Verify now",
+    "enroll": "Enroll",
+    "viewMore": "View more",
+    "startTrading": "Start trading",
+    "gotIt": "Got it",
+    "skip": "Skip",
+    "done": "Done",
+    "applyIdea": "Apply Idea",
+    "undo": "Undo"
+  },
+  "auth": {
+    "saveProgressTitle": "Save Your Progress",
+    "saveProgressSubtitle": "Join the TradeLab leaderboard and keep your stats safe.",
+    "emailLabel": "Email address",
+    "emailPlaceholder": "you@example.com",
+    "privacyNote": "We’ll never share your email. Only used for gameplay, leaderboards, and updates.",
+    "magicLinkSent": "Magic link created for demo.",
+    "verifyLinkCta": "Click to verify",
+    "verified": "You're verified and logged in.",
+    "errors": {
+      "invalidEmail": "Please enter a valid email.",
+      "expiredCode": "Verification link expired. Request a new one.",
+      "generic": "Something went wrong. Please try again."
+    }
+  },
+  "disclaimer": {
+    "title": "TradeLab Disclaimer",
+    "bullets": [
+      "Simulation only — no real money.",
+      "For educational and entertainment purposes only.",
+      "Not financial advice.",
+      "Past performance does not guarantee future results."
+    ],
+    "agree": "I understand and agree.",
+    "cta": "Continue to TradeLab"
+  },
+  "tour": {
+    "step1Title": "Pick a Market",
+    "step1Body": "Select an asset to trade. You can change this for each new game.",
+    "step2Title": "Set Your Amount",
+    "step2Body": "Choose a trade size. We auto-set Stop-Loss & Take-Profit to protect you.",
+    "step3Title": "Tap Buy or Sell",
+    "step3Body": "You’ll see live PnL instantly. You can close anytime from this dock."
+  },
+  "arena": {
+    "positions": "Positions",
+    "orders": "Orders",
+    "pnl": "PnL",
+    "equity": "Equity",
+    "risk": "Risk",
+    "orderTicket": "Order Ticket",
+    "size": "Size",
+    "sl": "Stop-Loss",
+    "tp": "Take-Profit",
+    "presets": {
+      "conservative": "Conservative",
+      "balanced": "Balanced",
+      "aggressive": "Aggressive"
+    },
+    "volatility": {
+      "label": "Volatility",
+      "low": "Low",
+      "moderate": "Moderate",
+      "high": "High",
+      "extreme": "Extreme"
+    },
+    "latency": "Latency",
+    "depth": "Order Book",
+    "tape": "Last Trades",
+    "sounds": {
+      "fill": "Order filled",
+      "stopHit": "Stop-Loss hit",
+      "takeProfitHit": "Take-Profit hit"
+    },
+    "quickDock": {
+      "buyNow": "BUY NOW",
+      "sellNow": "SELL NOW",
+      "amount": "Amount (USD)",
+      "autoBrackets": "Auto SL/TP",
+      "close": "Close Position",
+      "pnlLive": "Live PnL",
+      "hotkeysHint": "Hotkeys: B=Buy • S=Sell • X=Close"
+    },
+    "empty": {
+      "tapToBuy": "Tap BUY NOW to start a trade. We’ll place SL/TP for you."
+    }
+  },
+  "nudge": {
+    "tryStarterTrade": "Try a $50 starter trade—close anytime."
+  },
+  "toasts": {
+    "filled": "You’re in! Watching live PnL…",
+    "closed": "Position closed.",
+    "undo": "Trade placed."
+  },
+  "ai": {
+    "panelTitle": "AI Ideas",
+    "rationale": "Rationale",
+    "snapshot": "Feature snapshot",
+    "confidence": "Confidence"
+  },
+  "leaderboard": {
+    "title": "Leaderboard",
+    "tabs": {
+      "daily": "Daily",
+      "weekly": "Weekly"
+    },
+    "columns": {
+      "rank": "Rank",
+      "trader": "Trader",
+      "trades": "Trades",
+      "winRate": "Win Rate",
+      "bestR": "Best Trade (R)",
+      "totalPnl": "Total PnL ($)"
+    },
+    "emptyTitle": "No trades yet",
+    "emptySubtitle": "Start trading to see how you rank against others in TradeLab.",
+    "yourRank": "Your rank"
+  },
+  "tournaments": {
+    "title": "TradeLab Challenge",
+    "enrolled": "Enrolled",
+    "notEnrolled": "Not enrolled",
+    "liveScoreboard": "Live scoreboard"
+  },
+  "achievements": {
+    "title": "Badges",
+    "streak3": "Win Streak ×3",
+    "beatAi": "Beat the AI",
+    "bracket5": "Bracket Master ×5",
+    "noLoser20m": "No Loser in 20 Minutes",
+    "unlocked": "Unlocked!"
+  },
+  "notifications": {
+    "riskCap": "Order blocked: risk cap exceeded.",
+    "drawdown": "Daily drawdown reached. Trading paused until reset.",
+    "orderPlaced": "Order placed.",
+    "orderRejected": "Order rejected.",
+    "positionClosed": "Position closed."
+  },
+  "coach": {
+    "slTooTight": "Your Stop-Loss might be too tight for the current volatility. Consider giving the trade more room to breathe.",
+    "revenge": "Three losses in a row. It might be a good time to take a short break and reassess the market."
+  },
+  "paywall": {
+    "title": "Unlock TradeLab Pro",
+    "bullets": [
+      "Replay the last 24h at 4× speed",
+      "Advanced orders (OCO, trailing)",
+      "Faster AI ideas & Pro tournaments",
+      "Strategy backtests & trade journal"
+    ],
+    "cta": "Start 7-day free trial",
+    "later": "Maybe later"
+  },
+  "account": {
+    "title": "Your Account",
+    "role": "Plan",
+    "manage": "Manage billing",
+    "trial": "Trial days left",
+    "export": "Download your data",
+    "delete": "Delete my account",
+    "planFree": "Free",
+    "planPro": "Pro",
+    "exporting": "Exporting your data...",
+    "deleting": "Deleting your account..."
+  }
+}
