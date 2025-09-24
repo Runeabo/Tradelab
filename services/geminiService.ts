@@ -34,9 +34,13 @@ const tradeSignalSchema = {
       type: Type.STRING,
       description: 'A brief, 60-word maximum rationale for the decision.'
     },
+    confidence: {
+        type: Type.NUMBER,
+        description: 'A confidence score for this signal, from 0.0 (low) to 1.0 (high).'
+    },
     features_snapshot: featuresSnapshotSchema,
   },
-  required: ['action', 'positionSize', 'rationale', 'features_snapshot']
+  required: ['action', 'positionSize', 'rationale', 'confidence', 'features_snapshot']
 };
 
 const multiTradeSignalSchema = (count: number) => ({
@@ -79,6 +83,7 @@ const getPrompt = (
     const commonRules = `
     - Your position size must be a fraction of the total portfolio value, between 0.0 and ${MAX_POSITION_SIZE}.
     - Your rationale must be concise and under 60 words.
+    - You must provide a confidence score between 0.0 and 1.0 for your signal.
     - If current holdings are 0, you cannot SELL. If current cash is too low, you cannot BUY.
     - Be cautious. Preserve capital. Small, calculated risks are better than large, speculative ones.
     - Provide all indicator values in the 'features_snapshot' object, even if they are null or N/A.`;
@@ -135,12 +140,15 @@ const processSignal = (parsedSignal: any, currentCash: number, currentHoldings: 
         finalPositionSize = 0;
     }
 
+    const confidence = Math.max(0, Math.min(1, Number(parsedSignal.confidence) || 0));
+
     return {
         source: 'Gemini AI',
         action: finalAction,
         positionSize: finalPositionSize,
         rationale: finalRationale,
         features_snapshot: parsedSignal.features_snapshot,
+        confidence: confidence,
     };
 };
 

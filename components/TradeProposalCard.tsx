@@ -14,9 +14,23 @@ const TradeProposalCard: React.FC<TradeProposalCardProps> = ({ signal, onAccept,
   const [isExpanded, setIsExpanded] = useState(false);
   const { t } = useLocalization();
   const isAI = signal.source === 'Gemini AI';
-  
-  const cardBg = isAI ? 'bg-gradient-to-br from-blue-900/50 to-gray-800' : 'bg-gray-800';
-  const headerBg = isAI ? 'bg-blue-800/50' : 'bg-gray-700';
+  const isCustom = signal.source === 'Custom Strategy';
+
+  const cardBg = isAI ? 'bg-gradient-to-br from-blue-900/50 to-gray-800' : isCustom ? 'bg-gradient-to-br from-purple-900/50 to-gray-800' : 'bg-gray-800';
+  const headerBg = isAI ? 'bg-blue-800/50' : isCustom ? 'bg-purple-800/50' : 'bg-gray-700';
+
+  const getCardHeader = () => {
+      switch(signal.source) {
+          case 'Gemini AI':
+              return { icon: <BrainIcon />, text: signal.source.replace('Gemini', brandText) };
+          case 'Custom Strategy':
+              return { icon: <CalculatorIcon />, text: 'Custom Strategy' };
+          default:
+              return { icon: <CalculatorIcon />, text: 'Baseline' };
+      }
+  }
+
+  const { icon: cardIcon, text: cardTitle } = getCardHeader();
   const brandText = isAI ? BRAND_NAME : 'Baseline';
   
   const actionColor = {
@@ -31,12 +45,21 @@ const TradeProposalCard: React.FC<TradeProposalCardProps> = ({ signal, onAccept,
     [TradeAction.HOLD]: 'bg-gray-500/10',
   }
 
+  const getConfidenceInfo = (confidence?: number) => {
+    if (typeof confidence === 'undefined') return { color: 'bg-gray-500', label: 'N/A' };
+    if (confidence < 0.4) return { color: 'bg-red-500', label: 'Low' };
+    if (confidence < 0.75) return { color: 'bg-yellow-500', label: 'Medium' };
+    return { color: 'bg-green-500', label: 'High' };
+  };
+
+  const confidenceInfo = getConfidenceInfo(signal.confidence);
+
   return (
     <div className={`rounded-lg shadow-lg overflow-hidden border border-gray-700 ${cardBg} transition-all duration-300`}>
       <div className={`p-4 flex items-center justify-between ${headerBg}`}>
         <div className="flex items-center space-x-3">
-          {isAI ? <BrainIcon /> : <CalculatorIcon />}
-          <h3 className="font-bold text-lg text-white">{signal.source.replace('Gemini', brandText)}</h3>
+          {cardIcon}
+          <h3 className="font-bold text-lg text-white">{cardTitle}</h3>
         </div>
       </div>
       <div className="p-6 space-y-4">
@@ -60,6 +83,21 @@ const TradeProposalCard: React.FC<TradeProposalCardProps> = ({ signal, onAccept,
                 {signal.rationale}
             </p>
         </div>
+
+        {isAI && typeof signal.confidence !== 'undefined' && (
+          <div>
+            <div className="flex justify-between items-center mb-1">
+                <p className="text-sm text-gray-400">{t('ai.confidence')}</p>
+                <p className="text-sm font-semibold">{confidenceInfo.label}</p>
+            </div>
+            <div className="w-full bg-gray-700 rounded-full h-2">
+              <div
+                className={`${confidenceInfo.color} h-2 rounded-full`}
+                style={{ width: `${signal.confidence * 100}%` }}
+              ></div>
+            </div>
+          </div>
+        )}
 
         {isAI && signal.features_snapshot && (
           <>

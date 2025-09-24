@@ -6,6 +6,7 @@
   "navbar": {
     "home": "Home",
     "leaderboard": "Leaderboard",
+    "strategyLab": "Strategy Lab",
     "tournaments": "Tournaments",
     "disclaimer": "Disclaimer",
     "account": "Account"
@@ -191,5 +192,25 @@
     "planPro": "Pro",
     "exporting": "Exporting your data...",
     "deleting": "Deleting your account..."
+  },
+  "strategyLab": {
+    "title": "Strategy Lab",
+    "description": "Design, test, and deploy your own trading algorithms.",
+    "newStrategy": "New Strategy",
+    "myStrategies": "My Strategies",
+    "noStrategies": "You haven't created any strategies yet. Create one to get started!",
+    "editorTitle": "Strategy Editor",
+    "strategyName": "Strategy Name",
+    "strategyNamePlaceholder": "e.g., RSI Mean Reversion",
+    "strategyDesc": "Description",
+    "strategyDescPlaceholder": "A short description of how this strategy works.",
+    "buyConditions": "Buy Conditions",
+    "sellConditions": "Sell Conditions",
+    "addCondition": "Add Condition",
+    "conditionHelp": "All conditions must be true to trigger a signal.",
+    "saveStrategy": "Save Strategy",
+    "deleteStrategy": "Delete Strategy",
+    "proFeatureTitle": "Strategy Lab is a Pro Feature",
+    "proFeatureCta": "Upgrade to Pro to build and test your own trading strategies."
   }
 }

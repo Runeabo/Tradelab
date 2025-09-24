@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useCallback, useRef, useMemo } from 'react';
-import { User, PriceData, TradeSignal, TradeExecution, TradeAction, Asset, DifficultyLevel, GameRound, Position } from '../types';
+import { User, PriceData, TradeSignal, TradeExecution, TradeAction, Asset, DifficultyLevel, GameRound, Position, CustomStrategy } from '../types';
 import { getAITradeSignal } from '../services/geminiService';
 import { getDataSlice } from '../services/dataService';
+import { getCustomStrategies, evaluateCustomStrategy } from '../services/strategyService';
 import { INITIAL_CASH, GAME_LENGTH, AssetTicker } from '../constants';
 import PriceChart from './PriceChart';
 import TradeProposalCard from './TradeProposalCard';
@@ -33,6 +34,8 @@ const GameArena: React.FC<GameArenaProps> = ({ user, onRoundEnd, challengeConfig
     const [difficulty, setDifficulty] = useState<DifficultyLevel>(DifficultyLevel.BEGINNER);
     const [startIndex] = useState(challengeConfig?.startIndex || Math.floor(Math.random() * 4000));
     const [isReplayMode, setReplayMode] = useState(false);
+    const [customStrategies, setCustomStrategies] = useState<CustomStrategy[]>([]);
+    const [selectedStrategy, setSelectedStrategy] = useState('gemini_beginner');
 
     // Game Progression State
     const [gameState, setGameState] = useState<'loading' | 'playing' | 'finished'>('loading');
@@ -58,6 +61,12 @@ const GameArena: React.FC<GameArenaProps> = ({ user, onRoundEnd, challengeConfig
     // --- Effects ---
 
     useEffect(() => {
+        if (user.email !== 'guest' && features.canAccessStrategyLab) {
+            setCustomStrategies(getCustomStrategies(user.email));
+        }
+    }, [user.email, features.canAccessStrategyLab]);
+
+    useEffect(() => {
         if (localStorage.getItem('tourDone') !== 'true' && !challengeConfig) {
             setTourActive(true);
         }
@@ -81,10 +90,21 @@ const GameArena: React.FC<GameArenaProps> = ({ user, onRoundEnd, challengeConfig
     const fetchSignals = useCallback(async () => {
         if (!visiblePriceData.length || isLocked || currentStep >= GAME_LENGTH) return;
         setIsLoadingSignal(true);
-        const signals = await getAITradeSignal(visiblePriceData, cash, position?.size || 0, asset, difficulty);
-        setAiSignals(signals);
+
+        if (selectedStrategy.startsWith('gemini_')) {
+            const diff = selectedStrategy.split('_')[1].toUpperCase() as DifficultyLevel;
+            const signals = await getAITradeSignal(visiblePriceData, cash, position?.size || 0, asset, diff);
+            setAiSignals(signals);
+        } else {
+            const strategy = customStrategies.find(s => s.id === selectedStrategy);
+            if (strategy) {
+                const signal = evaluateCustomStrategy(visiblePriceData, strategy);
+                setAiSignals([signal]);
+            }
+        }
+
         setIsLoadingSignal(false);
-    }, [visiblePriceData, cash, position, asset, difficulty, isLocked, currentStep]);
+    }, [visiblePriceData, cash, position, asset, isLocked, currentStep, selectedStrategy, customStrategies]);
 
     useEffect(() => {
         if (gameState === 'playing' && currentStep > 0 && currentStep < GAME_LENGTH && !position) {
@@ -108,10 +128,11 @@ const GameArena: React.FC<GameArenaProps> = ({ user, onRoundEnd, challengeConfig
     // Hotkeys Effect
     useEffect(() => {
         const handleKeyPress = (e: KeyboardEvent) => {
-            if (isLocked) return;
-            if (e.key.toLowerCase() === 'b') document.getElementById('quick-trade-buy')?.click();
-            if (e.key.toLowerCase() === 's') document.getElementById('quick-trade-sell')?.click();
-            if (e.key.toLowerCase() === 'x') document.getElementById('quick-trade-close')?.click();
+            if (isLocked || !e.key) return;
+            const key = e.key.toLowerCase();
+            if (key === 'b') document.getElementById('quick-trade-buy')?.click();
+            if (key === 's') document.getElementById('quick-trade-sell')?.click();
+            if (key === 'x') document.getElementById('quick-trade-close')?.click();
         };
         window.addEventListener('keydown', handleKeyPress);
         return () => window.removeEventListener('keydown', handleKeyPress);
@@ -312,6 +333,23 @@ const GameArena: React.FC<GameArenaProps> = ({ user, onRoundEnd, challengeConfig
                                 </select>
                             </div>
                             <div>
+                                <label className="block text-gray-400 text-sm mb-1">Strategy Engine</label>
+                                <select value={selectedStrategy} onChange={e => setSelectedStrategy(e.target.value)} disabled={currentStep > 0} className="bg-gray-700 p-2 rounded w-full text-sm disabled:opacity-50">
+                                    <optgroup label="Gemini AI">
+                                        <option value="gemini_beginner">Beginner</option>
+                                        <option value="gemini_intermediate">Intermediate</option>
+                                        <option value="gemini_pro">Pro</option>
+                                    </optgroup>
+                                    {customStrategies.length > 0 && (
+                                        <optgroup label="My Strategies">
+                                            {customStrategies.map(s => (
+                                                <option key={s.id} value={s.id}>{s.name}</option>
+                                            ))}
+                                        </optgroup>
+                                    )}
+                                </select>
+                            </div>
+                            <div>
                                 <span className="text-gray-400 text-sm">{t('arena.volatility.label')}</span>
                                 <span className={`float-right font-semibold ${volatilityInfo.color}`}>
                                     {volatilityInfo.label}
@@ -349,7 +387,7 @@ const GameArena: React.FC<GameArenaProps> = ({ user, onRoundEnd, challengeConfig
                     : (currentStep < GAME_LENGTH && !position &&
                         <div className="col-span-full flex justify-center items-center">
                             <button onClick={fetchSignals} disabled={isLocked} className="px-6 py-3 bg-blue-600 rounded-lg hover:bg-blue-700 disabled:bg-gray-600 disabled:cursor-not-allowed text-lg font-bold">
-                                Get AI Trade Proposals
+                                Get Trade Proposals
                             </button>
                         </div>
                     )

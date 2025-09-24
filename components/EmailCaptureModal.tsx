@@ -14,8 +14,6 @@ const EmailCaptureModal: React.FC<EmailCaptureModalProps> = ({ isOpen, onClose, 
   const [email, setEmail] = useState('');
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-  const [isSubmitted, setSubmitted] = useState(false);
-  const [verifyUrl, setVerifyUrl] = useState('');
   const { t } = useLocalization();
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -27,14 +25,29 @@ const EmailCaptureModal: React.FC<EmailCaptureModalProps> = ({ isOpen, onClose, 
     setIsLoading(true);
     setError('');
     
-    const response = await registerForMagicLink(email);
-    
-    setIsLoading(false);
-    if (response.ok) {
-        setVerifyUrl(response.verify_url);
-        setSubmitted(true);
-    } else {
-        setError(t('auth.errors.generic'));
+    try {
+      const response = await registerForMagicLink(email);
+      
+      if (response.ok) {
+          // This is a demo, so we simulate the verification immediately by parsing the
+          // mock URL and calling the onSuccess callback, which avoids a page reload.
+          const url = new URL(response.verify_url);
+          const token = url.searchParams.get('token');
+          const userEmail = url.searchParams.get('email');
+          
+          if (token && userEmail) {
+              onSuccess({ email: userEmail, token });
+          } else {
+              throw new Error("Invalid verification URL from mock service.");
+          }
+      } else {
+          setError(t('auth.errors.generic'));
+      }
+    } catch(err) {
+      console.error("Magic link simulation failed:", err);
+      setError(t('auth.errors.generic'));
+    } finally {
+        setIsLoading(false);
     }
   };
   
@@ -43,8 +56,6 @@ const EmailCaptureModal: React.FC<EmailCaptureModalProps> = ({ isOpen, onClose, 
       setEmail('');
       setError('');
       setIsLoading(false);
-      setSubmitted(false);
-      setVerifyUrl('');
       onClose();
   }
 
@@ -72,49 +83,35 @@ const EmailCaptureModal: React.FC<EmailCaptureModalProps> = ({ isOpen, onClose, 
           </svg>
         </button>
 
-        {!isSubmitted ? (
-            <>
-                <h2 className="text-2xl font-bold text-center text-white mb-2">{t('auth.saveProgressTitle')}</h2>
-                <p className="text-center text-gray-400 mb-6">{t('auth.saveProgressSubtitle')}</p>
-                <form className="space-y-4" onSubmit={handleSubmit}>
-                    <div>
-                        <label htmlFor="email-capture" className="sr-only">{t('auth.emailLabel')}</label>
-                        <input
-                        id="email-capture"
-                        name="email"
-                        type="email"
-                        autoComplete="email"
-                        required
-                        value={email}
-                        onChange={(e) => { setEmail(e.target.value); setError(''); }}
-                        className="appearance-none rounded-md relative block w-full px-3 py-3 border border-gray-600 bg-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                        placeholder={t('auth.emailPlaceholder')}
-                        />
-                        {error && <p className="mt-2 text-sm text-red-400">{error}</p>}
-                    </div>
-                    <button
-                        type="submit"
-                        disabled={isLoading}
-                        className="w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600"
-                    >
-                        {isLoading ? <Spinner /> : t('buttons.sendMagicLink')}
-                    </button>
-                </form>
-                <p className="text-center text-xs text-gray-500 mt-4">{t('auth.privacyNote')}</p>
-            </>
-        ) : (
-            <div className="text-center">
-                <h2 className="text-2xl font-bold text-white mb-2">{t('auth.magicLinkSent')}</h2>
-                <p className="text-gray-400 mb-4">A magic link has been sent to your email.</p>
-                <p className="text-xs text-gray-500 mb-4">(For this demo, just click the link below to verify instantly)</p>
-                <a 
-                    href={verifyUrl}
-                    className="block w-full text-center py-3 px-4 font-medium rounded-md text-white bg-green-600 hover:bg-green-700"
+        <>
+            <h2 className="text-2xl font-bold text-center text-white mb-2">{t('auth.saveProgressTitle')}</h2>
+            <p className="text-center text-gray-400 mb-6">{t('auth.saveProgressSubtitle')}</p>
+            <form className="space-y-4" onSubmit={handleSubmit}>
+                <div>
+                    <label htmlFor="email-capture" className="sr-only">{t('auth.emailLabel')}</label>
+                    <input
+                    id="email-capture"
+                    name="email"
+                    type="email"
+                    autoComplete="email"
+                    required
+                    value={email}
+                    onChange={(e) => { setEmail(e.target.value); setError(''); }}
+                    className="appearance-none rounded-md relative block w-full px-3 py-3 border border-gray-600 bg-gray-700 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                    placeholder={t('auth.emailPlaceholder')}
+                    />
+                    {error && <p className="mt-2 text-sm text-red-400">{error}</p>}
+                </div>
+                <button
+                    type="submit"
+                    disabled={isLoading}
+                    className="w-full flex justify-center py-3 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 disabled:bg-gray-600"
                 >
-                    {t('auth.verifyLinkCta')}
-                </a>
-            </div>
-        )}
+                    {isLoading ? <Spinner /> : t('buttons.sendMagicLink')}
+                </button>
+            </form>
+            <p className="text-center text-xs text-gray-500 mt-4">{t('auth.privacyNote')}</p>
+        </>
       </div>
     </div>
   );

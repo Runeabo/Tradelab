@@ -50,11 +50,12 @@ export interface FeaturesSnapshot {
 }
 
 export interface TradeSignal {
-  source: 'Gemini AI' | 'Baseline Strategy' | 'Player';
+  source: 'Gemini AI' | 'Baseline Strategy' | 'Player' | 'Custom Strategy';
   action: TradeAction;
   positionSize: number; // as a fraction of portfolio value
   rationale: string;
   features_snapshot?: FeaturesSnapshot;
+  confidence?: number;
 }
 
 export interface TradeExecution {
@@ -63,7 +64,7 @@ export interface TradeExecution {
   price: number;
   amount: number; // units of asset
   rationale: string;
-  source: 'Gemini AI' | 'Baseline Strategy' | 'Player';
+  source: 'Gemini AI' | 'Baseline Strategy' | 'Player' | 'Custom Strategy';
 }
 
 export interface GameRound {
@@ -127,4 +128,37 @@ export interface PVPGame {
     player1Round?: GameRound;
     player2Round?: GameRound;
     winner?: string; // email or 'draw'
+}
+
+// Types for Custom Strategy Builder
+export enum Indicator {
+  PRICE = 'PRICE',
+  SMA10 = 'SMA10',
+  SMA20 = 'SMA20',
+  RSI = 'RSI',
+}
+
+export enum Operator {
+  IS_ABOVE = 'IS_ABOVE',
+  IS_BELOW = 'IS_BELOW',
+  CROSSES_ABOVE = 'CROSSES_ABOVE',
+  CROSSES_BELOW = 'CROSSES_BELOW',
+}
+
+export interface StrategyCondition {
+  id: string;
+  indicator1: Indicator;
+  operator: Operator;
+  compareTo: 'indicator' | 'value';
+  indicator2: Indicator;
+  value: number;
+}
+
+export interface CustomStrategy {
+  id: string;
+  userEmail: string;
+  name: string;
+  description: string;
+  buyConditions: StrategyCondition[];
+  sellConditions: StrategyCondition[];
 }

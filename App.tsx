@@ -13,8 +13,9 @@ import { logRound } from './services/gameService';
 import { LocalizationProvider, useLocalization } from './LocalizationContext';
 import PaywallModal from './components/PaywallModal';
 import AccountPage from './components/AccountPage';
+import StrategyLabPage from './components/StrategyLabPage';
 
-type Page = 'Home' | 'Leaderboard' | 'Achievements' | 'Analytics' | 'Daily Challenge' | 'PvP' | 'Account';
+type Page = 'Home' | 'Leaderboard' | 'Achievements' | 'Analytics' | 'Daily Challenge' | 'PvP' | 'Account' | 'Strategy Lab';
 
 const AppContent: React.FC = () => {
   const [user, setUser] = useState<User | null>(null);
@@ -104,6 +105,8 @@ const AppContent: React.FC = () => {
             return <PvPPage user={pageUser} />;
         case 'Account':
             return <AccountPage user={user} />;
+        case 'Strategy Lab':
+            return <StrategyLabPage user={pageUser} onPaywallOpen={() => setPaywallOpen(true)} />;
         default:
             return <GameArena key={gameKey} user={pageUser} onRoundEnd={handleRoundEnd} onFirstTrade={handleFirstTrade} isLocked={isDisclaimerRequired} onPaywallOpen={() => setPaywallOpen(true)} />;
     }

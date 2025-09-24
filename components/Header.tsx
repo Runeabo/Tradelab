@@ -1,7 +1,7 @@
 import React from 'react';
 import { useLocalization } from '../LocalizationContext';
 
-type Page = 'Home' | 'Leaderboard' | 'Achievements' | 'Analytics' | 'Daily Challenge' | 'PvP' | 'Account';
+type Page = 'Home' | 'Leaderboard' | 'Achievements' | 'Analytics' | 'Daily Challenge' | 'PvP' | 'Account' | 'Strategy Lab';
 
 interface HeaderProps {
   currentPage: Page;
@@ -41,6 +41,7 @@ const Header: React.FC<HeaderProps> = ({ currentPage, onNavigate }) => {
         <div className="hidden md:flex items-center space-x-2">
           <NavItem page="Home" text={t('navbar.home')} />
           <NavItem page="Leaderboard" text={t('navbar.leaderboard')} />
+          <NavItem page="Strategy Lab" text={t('navbar.strategyLab')} />
           <NavItem page="Daily Challenge" text={t('tournaments.title')} />
           <NavItem page="PvP" text="PvP" />
           <NavItem page="Account" text={t('navbar.account')} />
